@@ -1,9 +1,8 @@
-use std::io::prelude::*;
 use std::env;
-use std::fs::File;
+use std::fs::{File, write};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct Task {
     uid: u8,
     task: String,
@@ -14,15 +13,12 @@ struct Task {
 
 const PATH: &str = "./db/pending.json";
 
-fn main() {
-    let args: Vec<String> = env::args().collect();    
-
-    if args[1] == "add" {
-        add_todo(&args[2]);
-    } else if args[1] == "list" {
-        list_tasks();
-    }
-    println!("{:?}", args);
+fn help() {
+        println!("usage:
+                 match_args <string>
+                     Check whether given string is the answer.
+                     match_args {{increase|decrease}} <integer>
+                         Increase or decrease given integer by one.");
 }
 
 fn list_tasks() {
@@ -35,15 +31,41 @@ fn list_tasks() {
     }
 }
 
-fn add_todo(task: &str) -> std::io::Result<()> {
-    let mut file = File::open("./db/pending.json")?;
-    let mut content = String::new();
+fn add_todo(todo: &str) -> std::io::Result<()>{
+    let mut file = File::open(PATH).expect("File not found");
+    let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
 
-    file.read_to_string(&mut content)?;
-    
-    //Push new task
-    let fmt_task = format!("['task': '{}'],\n}}", task);
-    content = content.replace("}", &fmt_task);
-    println!("{}", content);
+    let task =  Task {
+        uid: 0,
+        task: (&todo).to_string(),
+        due: "110921".to_string(),
+        tag: "computers".to_string(),
+        status: "pending".to_string()
+    };
+
+    tasks.push(task);
+    let _json: String = serde_json::to_string(&tasks)?;
+
+    write(PATH, &_json).expect("Unable to write file");
+
+    println!("{:?}", tasks);
     Ok(())
 }
+
+fn main() {
+    let args: Vec<String> = env::args().collect();    
+    let cmd: &str = &args[1]; 
+
+    match cmd {
+        "list" => {
+            list_tasks();
+        }
+        "add" => {
+            add_todo(&args[2]);
+        }
+        _ => {
+              help();
+            }
+        }
+}
+
