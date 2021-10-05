@@ -1,2 +1,9 @@
-{
-}
+[
+    {
+        "uid": 0,
+        "task": "Finish Rust Taskminator task",
+        "due": "10242021",
+        "tag": "Computers",
+        "status": "pending"
+    }
+]
