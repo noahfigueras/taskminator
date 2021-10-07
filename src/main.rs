@@ -31,8 +31,8 @@ fn list_tasks() {
     }
 }
 
-fn add_todo(todo: &str) -> std::io::Result<()>{
-    let mut file = File::open(PATH).expect("File not found");
+fn add_task(todo: &str) -> std::io::Result<()>{
+    let file = File::open(PATH).expect("File not found");
     let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
 
     let task =  Task {
@@ -52,20 +52,37 @@ fn add_todo(todo: &str) -> std::io::Result<()>{
     Ok(())
 }
 
+//Helper fn
+
 fn main() {
     let args: Vec<String> = env::args().collect();    
-    let cmd: &str = &args[1]; 
 
-    match cmd {
-        "list" => {
+    println!("Arguments: {}", args.len());
+    match args.len() {
+        1 => {
             list_tasks();
-        }
-        "add" => {
-            add_todo(&args[2]);
-        }
+        } 
         _ => {
-              help();
+            match args[1].as_str() {
+               "-a" => {
+                    add_task(&args[2]);
+               } 
+               "-r" => {
+                    println!("Remove Todo");
+               }
+               "-c" => {
+                    println!("Completed Task");
+               }
+               "--help" => {
+                    println!("Show Help")
+               }
+               _ => {
+                    println!("Incorrect Arguments please use the --help command
+                             to check all of the possible options.");
+               }
             }
+            println!("Everything else");
         }
+    }
 }
 
