@@ -1,6 +1,7 @@
 use std::env;
 use std::fs::{File, write};
 use serde::{Deserialize, Serialize};
+use serde_json::Result;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Task {
@@ -13,6 +14,19 @@ struct Task {
 
 const PATH: &str = "./db/pending.json";
 
+fn read_json() -> Result<Vec<Task>> {
+    let file = File::open(PATH).expect("File not found");
+    let j: Vec<Task> = serde_json::from_reader(file)?;
+    Ok(j)
+}
+
+fn write_json(tasks: &Vec<Task>) -> Result<()> {
+    let _json: String = serde_json::to_string(&tasks).expect("Error parsing to json");
+    write(PATH, &_json).expect("Unable to write file");
+    println!("Task Deleted Successfully");
+    Ok(())
+}
+
 fn help() {
         println!("usage:
                  match_args <string>
@@ -22,8 +36,7 @@ fn help() {
 }
 
 fn list_tasks() {
-    let file = File::open(PATH).expect("File not found");
-    let tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
+    let tasks: Vec<Task> = read_json().expect("error while reading");
     
     let mut counter: u8 = 0;
     //Print tasks
@@ -38,8 +51,8 @@ fn list_tasks() {
 }
 
 fn remove_task(id: &str) {
-    let file = File::open(PATH).expect("File not found");
-    let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
+    let mut tasks: Vec<Task> = read_json().expect("error while reading");
+
     //Find taskbyId
     let mut found: bool = false;
     for task in &tasks {
@@ -49,11 +62,10 @@ fn remove_task(id: &str) {
             break;
         }
     }
+
+    // Write to file
     if found {
-        // Write to file
-        let _json: String = serde_json::to_string(&tasks).expect("Error parsing to json");
-        write(PATH, &_json).expect("Unable to write file");
-        println!("Task Deleted Successfully");
+        write_json(&tasks).expect("Couldn't write to file");
     } else {
         println!("Task Not found")
     }
