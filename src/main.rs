@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Task {
-    uid: u8,
+    uid: String,
     task: String,
     due: String,
     tag: String,
@@ -31,33 +31,53 @@ fn list_tasks() {
     }
 }
 
+fn remove_task(id: &str) {
+    let file = File::open(PATH).expect("File not found");
+    let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
+    //Find taskbyId
+    let mut found: bool = false;
+    for task in &tasks {
+        if task.uid == id {
+            tasks.remove((id.parse::<u8>().unwrap()).into());
+            found = true;
+            break;
+        }
+    }
+    if found {
+        // Write to file
+        let _json: String = serde_json::to_string(&tasks).expect("Error parsing to json");
+        write(PATH, &_json).expect("Unable to write file");
+        println!("Task Deleted Successfully");
+    } else {
+        println!("Task Not found")
+    }
+}
+
 fn add_task(todo: &str) -> std::io::Result<()>{
     let file = File::open(PATH).expect("File not found");
     let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
-
+    //Create Task
     let task =  Task {
-        uid: 0,
+        uid: "0".to_string(),
         task: (&todo).to_string(),
         due: "110921".to_string(),
         tag: "computers".to_string(),
         status: "pending".to_string()
     };
-
+    //Update Json
     tasks.push(task);
     let _json: String = serde_json::to_string(&tasks)?;
-
+    // Write to file
     write(PATH, &_json).expect("Unable to write file");
 
     println!("{:?}", tasks);
     Ok(())
 }
 
-//Helper fn
 
 fn main() {
     let args: Vec<String> = env::args().collect();    
 
-    println!("Arguments: {}", args.len());
     match args.len() {
         1 => {
             list_tasks();
@@ -68,7 +88,7 @@ fn main() {
                     add_task(&args[2]);
                } 
                "-r" => {
-                    println!("Remove Todo");
+                    remove_task(&args[2]);
                }
                "-c" => {
                     println!("Completed Task");
@@ -81,7 +101,6 @@ fn main() {
                              to check all of the possible options.");
                }
             }
-            println!("Everything else");
         }
     }
 }
