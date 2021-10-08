@@ -24,11 +24,17 @@ fn help() {
 fn list_tasks() {
     let file = File::open(PATH).expect("File not found");
     let tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
-
+    
+    let mut counter: u8 = 0;
     //Print tasks
-    for task in tasks {
-        println!("Task: {}", task.task);
+    for task in &tasks {
+        if task.status == "pending" {
+            println!("Task: {}", task.task);
+        } else {
+            counter = counter + 1;
+        }
     }
+    println!("Tasks Completed: {}", counter);
 }
 
 fn remove_task(id: &str) {
@@ -73,6 +79,23 @@ fn add_task(todo: &str) {
     println!("Task Added: {}", &todo);
 }
 
+fn completed_task(index: &str) {
+    let file = File::open(PATH).expect("File not found");
+    let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
+
+    for task in &mut tasks {
+        if task.uid == index {
+            task.status = String::from("completed");
+            break;
+        }
+    }
+    println!("{:?}", tasks);
+    let _json: String = serde_json::to_string(&tasks).expect("Json not parsed correctly");
+    // Write to file
+    write(PATH, &_json).expect("Unable to write file");
+
+    println!("Task {} Added as completed!",&index);
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();    
@@ -90,7 +113,7 @@ fn main() {
                     remove_task(&args[2]);
                }
                "-c" => {
-                    println!("Completed Task");
+                    completed_task(&args[2]);
                }
                "--help" => {
                     help();
