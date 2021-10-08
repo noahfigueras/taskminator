@@ -53,7 +53,7 @@ fn remove_task(id: &str) {
     }
 }
 
-fn add_task(todo: &str) -> std::io::Result<()>{
+fn add_task(todo: &str) {
     let file = File::open(PATH).expect("File not found");
     let mut tasks: Vec<Task> = serde_json::from_reader(file).expect("error while reading");
     //Create Task
@@ -66,12 +66,11 @@ fn add_task(todo: &str) -> std::io::Result<()>{
     };
     //Update Json
     tasks.push(task);
-    let _json: String = serde_json::to_string(&tasks)?;
+    let _json: String = serde_json::to_string(&tasks).expect("Json not parsed correctly");
     // Write to file
     write(PATH, &_json).expect("Unable to write file");
 
-    println!("{:?}", tasks);
-    Ok(())
+    println!("Task Added: {}", &todo);
 }
 
 
@@ -94,7 +93,7 @@ fn main() {
                     println!("Completed Task");
                }
                "--help" => {
-                    println!("Show Help")
+                    help();
                }
                _ => {
                     println!("Incorrect Arguments please use the --help command
