@@ -11,6 +11,5 @@ pub fn read_json() -> Result<Vec<Task>> {
 pub fn write_json(tasks: &Vec<Task>) -> Result<()> {
     let _json: String = serde_json::to_string(&tasks).expect("Error parsing to json");
     write(PATH, &_json).expect("Unable to write file");
-    println!("Task Deleted Successfully");
     Ok(())
 }

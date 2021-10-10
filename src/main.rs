@@ -18,7 +18,7 @@ fn main() {
         _ => {
             match args[1].as_str() {
                "-a" => {
-                    add_task(&args[2]);
+                    add_task(args[2..].to_vec());
                } 
                "-r" => {
                     remove_task(&args[2]);
