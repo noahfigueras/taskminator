@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use chrono::prelude::*;
 
 mod aux;
-use aux::{read_json, write_json, date_fmt};
+use aux::{read_json, write_json, date_fmt, append_json};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Task {
@@ -100,20 +100,19 @@ pub fn add_task(todo: Vec<String>) {
 }
 
 pub fn completed_task(index: &str) {
-    let mut tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
+    let tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
     let task_i: u8 = index.parse::<u8>().unwrap();
 
+
     let mut i: u8 = 0;
-    for task in &mut tasks {
+    //Move to completed.json
+    for task in tasks {
         if i == task_i {
-            task.status = String::from("completed");
+            append_json(task,PATHC);
+            remove_task(index);
+            println!("Task {} Added as completed!",&index);
             break;
         }
         i = i+1;
     }
-
-    // Write to file
-    write_json(&tasks, PATHP).expect("Unable to write file");
-
-    println!("Task {} Added as completed!",&index);
 }
