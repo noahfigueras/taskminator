@@ -24,6 +24,8 @@ pub fn date_fmt(date: &String, task: &mut Task) {
     }
 } 
 
-pub fn append_to_json(path: &str, task: Task) {
-    
+pub fn append_json(task: Task, path: &str) {
+   let mut tasks: Vec<Task> = read_json(path).expect("error while reading file");
+   tasks.push(task);
+   write_json(&tasks, path).expect("Unable to write file");
 }
