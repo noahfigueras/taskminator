@@ -1,1 +1,1 @@
-[]
+[{"uid":"123543205","task":"Add Date functionality","due":"","project":"Taskminator","status":"pending"},{"uid":"123543205","task":"Fix completed_task command should move the task to another file completed.json","due":"","project":"Taskminator","status":"pending"},{"uid":"123543205","task":"Format output of list_tasks","due":"","project":"Taskminator","status":"pending"},{"uid":"123543205","task":"Get rid of uid, it doesn't make sense ","due":"","project":"Taskminator","status":"pending"}]

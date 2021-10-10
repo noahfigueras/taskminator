@@ -6,6 +6,7 @@ use aux::{read_json, write_json};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Task {
+    uid: String,
     task: String,
     due: String,
     project: String,
@@ -53,6 +54,7 @@ pub fn add_task(todo: Vec<String>) {
 
     //Create Task
     let mut task =  Task {
+        uid: "123543205".to_string(),
         task: (&todo[0]).to_string(),
         due: "".to_string(),
         project: "".to_string(),
