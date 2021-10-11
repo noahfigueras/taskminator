@@ -18,7 +18,7 @@ pub fn write_json(tasks: &Vec<Task>, path: &str) -> Result<()> {
 pub fn date_fmt(date: &String, task: &mut Task) {
     let re = Regex::new(r"^\d{4}-\d{2}-\d{2}$").unwrap();
     if re.is_match(&date) {
-        task.project = (&date).to_string();
+        task.due = (&date).to_string();
     } else {
         println!("Wrong Format for date please enter: YYYY-MM-DD")
     }
