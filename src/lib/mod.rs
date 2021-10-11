@@ -3,7 +3,13 @@ use serde::{Deserialize, Serialize};
 use chrono::prelude::*;
 
 mod aux;
-use aux::{read_json, write_json, date_fmt, append_json};
+use aux::{
+    read_json,
+    write_json,
+    date_fmt,
+    append_json,
+    completed_count
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Task {
@@ -27,7 +33,6 @@ pub fn help() {
 pub fn list_tasks() {
     let tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
     
-    let mut completed_c: u8 = 0;
     let mut pending_c: u8 = 0;
 
     //Print tasks
@@ -35,14 +40,13 @@ pub fn list_tasks() {
         if task.status == "pending" {
             println!("{}: {}", i, task.task);
             pending_c = pending_c + 1;
-        } else if task.status == "completed" {
-            //Show only completed today
-            let dt: DateTime<Local> = Local::now();
-            println!("{}", dt.format("%Y-%m-%d").to_string());
-            completed_c = completed_c + 1;
-       }
+        }
     }
-    println!("Completed today: {} | Total pending: {}", completed_c, pending_c);
+
+    //Get Today's date
+    let dt: DateTime<Local> = Local::now();
+    let today: String = dt.format("%Y-%m-%d").to_string();
+    println!("Completed today: {} | Total pending: {}", completed_count(today), pending_c);
 }
 
 pub fn remove_task(id: &str) {
@@ -68,9 +72,10 @@ pub fn add_task(todo: Vec<String>) {
         status: "pending".to_string()
     };
 
-    //Add commands to add info to task.due and task.project
+    //Check for incorrect paramaters after task: String added
     if todo.len() > 1 {
         for (index,value) in todo.iter().enumerate() {
+            //Check for unrecoverable error
             if (index+1 < todo.len()) && (index > 0) {
                 match value.as_str() {
                     "-d" => {
