@@ -30,7 +30,7 @@ pub fn append_json(task: Task, path: &str) {
    write_json(&tasks, path).expect("Unable to write file");
 }
 
-pub fn completed_today_count(today: String) -> String {
+pub fn completed_count(today: String) -> String {
     let tasks: Vec<Task> = read_json(PATHC).expect("error while reading");
     let mut index: usize = tasks.len() - 1;
     let mut count: u8 = 0;
