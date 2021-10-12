@@ -42,9 +42,10 @@ pub fn list_tasks() {
     }
 
     //Get Today's date
-    let dt: DateTime<Local> = Local::now();
-    let today: String = dt.format("%Y-%m-%d").to_string();
-    println!("Completed today: {} | Total pending: {}", completed_count(today), pending_c);
+    let today: String = Local::now().format("%Y-%m-%d").to_string();
+    println!(" -------------------- ------------------");
+    println!("| Completed today: {} | Total pending: {} |", completed_count(today), pending_c);
+    println!(" -------------------- ------------------");
 }
 
 pub fn remove_task(id: &str) {
@@ -111,7 +112,7 @@ pub fn completed_task(index: &str) {
     //Move to completed.json
     for mut task in tasks {
         if i == task_i {
-            task.due = Local::now().format("%Y-%m-%d").to_string();
+            task.due = "today".to_string();
             append_json(task,PATHC);
             remove_task(index);
             println!("Task {} Added as completed!",&index);
