@@ -34,10 +34,13 @@ pub fn list_tasks() {
     let tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
     
     let mut pending_c: u8 = 0;
+    println!("  --   -------   ---            -----------");
+    println!("| ID | Project | Due |          Description          |");
+    println!("  --   -------   ---            -----------");
 
     //Print tasks
     for(i, task) in tasks.iter().enumerate() {
-        println!("{}: {}", i, task.task);
+        println!("{} {} {} {}", i, task.project, task.due, task.task);
         pending_c = pending_c + 1;
     }
 
@@ -61,7 +64,6 @@ pub fn remove_task(id: &str) {
 
 pub fn add_task(todo: Vec<String>) {
     let mut tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
-    let mut incorrect_cmd: bool = false;
 
     //Create Task
     let mut task =  Task {
@@ -71,27 +73,39 @@ pub fn add_task(todo: Vec<String>) {
         status: "pending".to_string()
     };
 
-    //Check for incorrect paramaters after task: String added
-    if todo.len() > 1 {
-        for (index,value) in todo.iter().enumerate() {
-            //Check for unrecoverable error
-            if (index+1 < todo.len()) && (index > 0) {
-                match value.as_str() {
-                    "-d" => {
-                        //Insert Date
-                        date_fmt(&todo[index+1], &mut task);
-                    }
-                    "-p" => {
-                        //Insert Project
-                        task.project = (&todo[index+1]).to_string();
-                    } 
-                    _=> {
-                        incorrect_cmd = true;
-                        println!("Incorrect commant {} please check --help to see all commands", value);
-                    }
-                }
-            }         
+    fn match_cmd(args: Vec<String>, task: &mut Task) -> bool {
+        match args[0].as_str() {
+            "-d" => {
+                //Insert Date
+                date_fmt(&args[1], task);
+                false
+            }
+            "-p" => {
+                //Insert Project
+                task.project = (&args[1]).to_string();
+                false
+            } 
+            _=> {
+                println!("Incorrect command {} please check --help to see all commands", args[0]);
+                println!("Date Format has to be: YYYY-MM-DD");
+                true
+            }
         }
+    }
+
+    let mut incorrect_cmd: bool = false;
+    //Check for correct commands
+    if todo.len() == 3 {
+       incorrect_cmd = match_cmd(todo[1..].to_vec(), &mut task);
+    } else if todo.len() == 5 {
+       if match_cmd(todo[1..3].to_vec(), &mut task) || 
+          match_cmd(todo[3..].to_vec(), &mut task) 
+          {
+            incorrect_cmd = true;
+          }
+    } else if todo.len() > 1{
+        incorrect_cmd = true;
+        println!("Error: Incorrect Command or Incomplete");
     }
     
     if !incorrect_cmd {
