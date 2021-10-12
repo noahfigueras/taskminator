@@ -38,8 +38,8 @@ pub fn completed_count(today: String) -> u8 {
     while index > 0 {
         if tasks[index].due == today {
             count += 1;
-        } 
-        index -= 1;
-    };
+        }
+        index -= 1
+    }
     count
 }
