@@ -1,6 +1,7 @@
 // Command Functions
 use serde::{Deserialize, Serialize};
 use chrono::prelude::*;
+use ansi_term::{Style, Colour};
 
 mod aux;
 use aux::{
@@ -34,13 +35,16 @@ pub fn list_tasks() {
     let tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
     
     let mut pending_c: u8 = 0;
-    println!("  --   -------   ---            -----------");
-    println!("| ID | Project | Due |          Description          |");
-    println!("  --   -------   ---            -----------");
+    let style = Style::new().underline();
+    println!("\n{}|{}|{}|{}", 
+    style.paint(" Id "),
+    style.paint(" Project      "), 
+    style.paint(" Due      "), 
+    style.paint(" Description               "));
 
     //Print tasks
     for(i, task) in tasks.iter().enumerate() {
-        println!("{} {} {} {}", i, task.project, task.due, task.task);
+        println!("{:^5}{:<15}{:<12}{}", i, task.project, task.due, task.task);
         pending_c = pending_c + 1;
     }
 
