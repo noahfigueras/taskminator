@@ -37,10 +37,8 @@ pub fn list_tasks() {
 
     //Print tasks
     for(i, task) in tasks.iter().enumerate() {
-        if task.status == "pending" {
-            println!("{}: {}", i, task.task);
-            pending_c = pending_c + 1;
-        }
+        println!("{}: {}", i, task.task);
+        pending_c = pending_c + 1;
     }
 
     //Get Today's date
@@ -111,8 +109,9 @@ pub fn completed_task(index: &str) {
 
     let mut i: u8 = 0;
     //Move to completed.json
-    for task in tasks {
+    for mut task in tasks {
         if i == task_i {
+            task.due = Local::now().format("%Y-%m-%d").to_string();
             append_json(task,PATHC);
             remove_task(index);
             println!("Task {} Added as completed!",&index);
