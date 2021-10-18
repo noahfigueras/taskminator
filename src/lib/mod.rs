@@ -20,8 +20,8 @@ pub struct Task {
     status: String
 }
 
-const PATHP: &str = "./db/pending.json";
-const PATHC: &str = "./db/completed.json";
+const PATHP: &str = "/usr/bin/db/pending.json";
+const PATHC: &str = "/usr/bin/db/completed.json";
 
 pub fn help() {
         println!("usage:
@@ -50,9 +50,7 @@ pub fn list_tasks() {
 
     //Get Today's date
     let today: String = Local::now().format("%Y-%m-%d").to_string();
-    println!(" -------------------- ------------------");
-    println!("| Completed today: {} | Total pending: {} |", completed_count(today), pending_c);
-    println!(" -------------------- ------------------");
+    println!("\n| Completed today: {} | Total pending: {} |\n", completed_count(today), pending_c);
 }
 
 pub fn remove_task(id: &str) {
@@ -77,25 +75,6 @@ pub fn add_task(todo: Vec<String>) {
         status: "pending".to_string()
     };
 
-    fn match_cmd(args: Vec<String>, task: &mut Task) -> bool {
-        match args[0].as_str() {
-            "-d" => {
-                //Insert Date
-                date_fmt(&args[1], task);
-                false
-            }
-            "-p" => {
-                //Insert Project
-                task.project = (&args[1]).to_string();
-                false
-            } 
-            _=> {
-                println!("Incorrect command {} please check --help to see all commands", args[0]);
-                println!("Date Format has to be: YYYY-MM-DD");
-                true
-            }
-        }
-    }
 
     let mut incorrect_cmd: bool = false;
     //Check for correct commands
@@ -127,15 +106,51 @@ pub fn completed_task(index: &str) {
 
 
     let mut i: u8 = 0;
+    let today: String = Local::now().format("%Y-%m-%d").to_string();
     //Move to completed.json
     for mut task in tasks {
         if i == task_i {
-            task.due = "today".to_string();
+            task.due = today;
             append_json(task,PATHC);
             remove_task(index);
             println!("Task {} Added as completed!",&index);
             break;
         }
         i = i+1;
+    }
+}
+
+pub fn update_task(index: &str, args: Vec<String>) {
+    let tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
+    let task_i: u8 = index.parse::<u8>().unwrap();
+
+    let mut i: u8 = 0;
+    // Update fields
+    for mut task in tasks {
+        if i == task_i && match_cmd(args.to_vec(), &mut task){
+            println!("Task {} Updated!",&index);
+            break;
+        }
+        i = i+1;
+    }
+}
+
+pub fn match_cmd(args: Vec<String>, task: &mut Task) -> bool {
+    match args[0].as_str() {
+        "-d" => {
+            //Insert Date
+            date_fmt(&args[1], task);
+            false
+        }
+        "-p" => {
+            //Insert Project
+            task.project = (&args[1]).to_string();
+            false
+        } 
+        _=> {
+            println!("Incorrect command {} please check --help to see all commands", args[0]);
+            println!("Date Format has to be: YYYY-MM-DD");
+            true
+        }
     }
 }
