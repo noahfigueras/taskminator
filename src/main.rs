@@ -5,6 +5,7 @@ use lib::{
     add_task,
     remove_task,
     completed_task,
+    update_task,
     help
 };
 
@@ -25,6 +26,9 @@ fn main() {
                }
                "-c" => {
                     completed_task(&args[2]);
+               }
+               "-u" => {
+                    update_task(&args[2], (&args[3..]).to_vec());
                }
                "--help" => {
                     help();

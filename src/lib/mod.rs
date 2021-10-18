@@ -123,11 +123,13 @@ pub fn completed_task(index: &str) {
 pub fn update_task(index: &str, args: Vec<String>) {
     let tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
     let task_i: u8 = index.parse::<u8>().unwrap();
-
+    
     let mut i: u8 = 0;
     // Update fields
     for mut task in tasks {
-        if i == task_i && match_cmd(args.to_vec(), &mut task){
+        if i == task_i && !match_cmd(args.to_vec(), &mut task){
+            remove_task(index);
+            append_json(task,PATHP);
             println!("Task {} Updated!",&index);
             break;
         }
@@ -135,7 +137,7 @@ pub fn update_task(index: &str, args: Vec<String>) {
     }
 }
 
-pub fn match_cmd(args: Vec<String>, task: &mut Task) -> bool {
+fn match_cmd(args: Vec<String>, task: &mut Task) -> bool {
     match args[0].as_str() {
         "-d" => {
             //Insert Date
