@@ -94,7 +94,6 @@ pub fn add_task(todo: Vec<String>) {
         //Update and Write
         tasks.push(task);
         write_json(&tasks, PATHP).expect("Unable to write file");
-
         println!("Task Added: {}", &todo[0]);
     } 
 }
