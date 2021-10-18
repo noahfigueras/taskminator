@@ -61,7 +61,6 @@ pub fn remove_task(id: &str) {
 
     // Write to file
     write_json(&tasks, PATHP).expect("Couldn't write to file");
-    println!("Task Deleted Successfully");
 }
 
 pub fn add_task(todo: Vec<String>) {
