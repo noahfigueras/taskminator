@@ -13,11 +13,24 @@ use aux::{
 };
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Tracker {
+    date: String,
+    hours: String
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct State {
+    active: bool,
+    start: String,
+    tracker: Vec<Tracker>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Task {
     task: String,
     due: String,
     project: String,
-    status: String
+    status: State
 }
 
 const PATHP: &str = "/usr/bin/db/pending.json";
@@ -65,13 +78,28 @@ pub fn remove_task(id: &str) {
 
 pub fn add_task(todo: Vec<String>) {
     let mut tasks: Vec<Task> = read_json(PATHP).expect("error while reading");
+    let mut _tracker: Vec<Tracker> = Vec::with_capacity(5);
+
+    // Init tracker Vector
+    let tracker_info = Tracker {
+            date: "today".to_string(),
+            hours: "0".to_string()
+    };
+    _tracker.push(tracker_info);
+    
+    // Init State struct
+    let state = State {
+        active: false,
+        start: "today".to_string(),
+        tracker: _tracker
+    };
 
     //Create Task
     let mut task =  Task {
         task: (&todo[0]).to_string(),
         due: "".to_string(),
         project: "".to_string(),
-        status: "pending".to_string()
+        status: state
     };
 
 
@@ -136,6 +164,7 @@ pub fn update_task(index: &str, args: Vec<String>) {
     }
 }
 
+// Aux Function
 fn match_cmd(args: Vec<String>, task: &mut Task) -> bool {
     match args[0].as_str() {
         "-d" => {

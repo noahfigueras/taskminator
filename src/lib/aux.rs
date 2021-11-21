@@ -1,4 +1,4 @@
-use crate::lib::{Task, PATHC};
+use crate::lib::{Task, State, Tracker, PATHC};
 use std::fs::{File, write};
 use serde_json::Result;
 use regex::Regex;
@@ -32,8 +32,15 @@ pub fn append_json(task: Task, path: &str) {
 
 pub fn completed_count(today: String) -> u8 {
     let tasks: Vec<Task> = read_json(PATHC).expect("error while reading");
-    let mut index = tasks.len() - 1;
+    let mut index; 
     let mut count: u8 = 0;
+
+    // Assign correct index value if empty list
+    if tasks.len() == 0 {
+        index = 0;
+    } else { 
+        index = tasks.len() -1;
+    }
 
     while index > 0 {
         if tasks[index].due == today {

@@ -30,6 +30,13 @@ fn main() {
                "-u" => {
                     update_task(&args[2], (&args[3..]).to_vec());
                }
+               "--start" => {
+                    println!("Start time for a task");
+               }
+               "--stop" => {
+                    println!("Stop time for task");
+               }
+
                "--help" => {
                     help();
                }
