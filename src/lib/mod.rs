@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use chrono::prelude::*;
 use ansi_term::{Style, Colour};
 
+pub mod time_manager;
 mod aux;
 use aux::{
     read_json,
@@ -82,7 +83,7 @@ pub fn add_task(todo: Vec<String>) {
 
     // Init tracker Vector
     let tracker_info = Tracker {
-            date: "today".to_string(),
+            date: "".to_string(),
             hours: "0".to_string()
     };
     _tracker.push(tracker_info);
@@ -90,7 +91,7 @@ pub fn add_task(todo: Vec<String>) {
     // Init State struct
     let state = State {
         active: false,
-        start: "today".to_string(),
+        start: "0".to_string(),
         tracker: _tracker
     };
 

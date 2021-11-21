@@ -1,4 +1,4 @@
-use crate::lib::{Task, State, Tracker, PATHC};
+use crate::lib::{Task, PATHC};
 use std::fs::{File, write};
 use serde_json::Result;
 use regex::Regex;

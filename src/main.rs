@@ -6,8 +6,10 @@ use lib::{
     remove_task,
     completed_task,
     update_task,
-    help
+    help,
+    time_manager
 };
+use time_manager::{start, stop};
 
 fn main() {
     let args: Vec<String> = env::args().collect();    
@@ -31,10 +33,10 @@ fn main() {
                     update_task(&args[2], (&args[3..]).to_vec());
                }
                "--start" => {
-                    println!("Start time for a task");
+                    start(&args[2]);
                }
                "--stop" => {
-                    println!("Stop time for task");
+                    stop(&args[2]);
                }
 
                "--help" => {
