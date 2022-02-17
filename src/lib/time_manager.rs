@@ -67,5 +67,20 @@ fn time_difference(start_time: String, end_time: String) -> String {
    // Calculate time difference
    let hours = end_hour - start_hour;
    let min = end_min - start_min;
-   format!("{}:{}", hours, min).to_string()
+   println!("{:02}:{:02}", hours, min);
+   format!("{:02}:{:02}", hours, min).to_string()
+}
+
+pub fn get_total_time(tracks: &Vec<Tracker>) -> String {
+    let length = tracks.len();
+    let mut i = 0;
+    let mut _hours = 0;
+    let mut _mins = 0;
+
+    while i < length {
+        _hours += tracks[i].hours[..2].parse::<u8>().unwrap(); 
+        _mins += tracks[i].hours[3..].parse::<u8>().unwrap(); 
+        i += 1;
+    }
+   format!("{}:{}", _hours, _mins).to_string()
 }

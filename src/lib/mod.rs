@@ -4,6 +4,10 @@ use chrono::prelude::*;
 use ansi_term::{Style, Colour};
 
 pub mod time_manager;
+use time_manager::{
+    get_total_time    
+};
+
 mod aux;
 use aux::{
     read_json,
@@ -50,15 +54,16 @@ pub fn list_tasks() {
     
     let mut pending_c: u8 = 0;
     let style = Style::new().underline();
-    println!("\n{}|{}|{}|{}", 
+    println!("\n{}|{}|{}|{}|{}", 
     style.paint(" Id "),
     style.paint(" Project      "), 
     style.paint(" Due      "), 
+    style.paint(" Time "),
     style.paint(" Description               "));
 
     //Print tasks
     for(i, task) in tasks.iter().enumerate() {
-        println!("{:^5}{:<15}{:<12}{}", i, task.project, task.due, task.task);
+        println!("{:^5}{:<15}{:<12}{:<5}{}", i, task.project, task.due, get_total_time(&task.status.tracker), task.task);
         pending_c = pending_c + 1;
     }
 
@@ -84,7 +89,7 @@ pub fn add_task(todo: Vec<String>) {
     // Init tracker Vector
     let tracker_info = Tracker {
             date: "".to_string(),
-            hours: "0".to_string()
+            hours: "00:00".to_string()
     };
     _tracker.push(tracker_info);
     
@@ -98,8 +103,8 @@ pub fn add_task(todo: Vec<String>) {
     //Create Task
     let mut task =  Task {
         task: (&todo[0]).to_string(),
-        due: "".to_string(),
-        project: "".to_string(),
+        due: Local::now().format("%Y-%m-%d").to_string(),
+        project: "Personal".to_string(),
         status: state
     };
 
